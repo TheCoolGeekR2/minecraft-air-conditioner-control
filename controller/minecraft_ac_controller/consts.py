@@ -1,4 +1,5 @@
 BIOMES = {
+    # TODO: Add mroe biomes
     # Cold Biomes
     "minecraft:snowy_slopes": {"temperature_c": 16, "climate": "Cold", "wind": 1.8},
     "minecraft:jagged_peaks": {"temperature_c": 16, "climate": "Cold", "wind": 2.0},
