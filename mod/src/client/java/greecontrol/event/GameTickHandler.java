@@ -33,9 +33,10 @@ public class GameTickHandler {
     }
 
     private void sendBiome(HttpClient client, Identifier BiomeID) {
+        String biome_parameter = "{ \"biome\": \"" + BiomeID.toString() + "\" }";
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(AC_API))
-                .POST(BodyPublishers.ofString(BiomeID.toString()))
+                .POST(BodyPublishers.ofString(biome_parameter))
                 .build();
         client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
 
