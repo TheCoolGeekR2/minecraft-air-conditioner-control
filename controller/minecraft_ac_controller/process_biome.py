@@ -1,9 +1,15 @@
 from typing import Dict
 from .consts import BIOMES
+from .exceptions import BiomeNotFound
 
 def process_biome(biome_data: Dict):
     biome_id = biome_data["biome"]
     biome_name = biome_id.replace("minecraft:", "")
-    ac_parameters = BIOMES[biome_name]
+    
+    try:
+        ac_parameters = BIOMES[biome_name]
+    except KeyError:
+        raise BiomeNotFound(biome_name)
+    
     print(f"Biome ID: {biome_id}, AC Parameters: {ac_parameters}")
     

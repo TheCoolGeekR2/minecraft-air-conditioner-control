@@ -1,0 +1,2 @@
+class BiomeNotFound(Exception):
+    pass
