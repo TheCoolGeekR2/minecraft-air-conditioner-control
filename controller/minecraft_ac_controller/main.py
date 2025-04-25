@@ -9,7 +9,12 @@ def start_ac_handler(ac, server_class=HTTPServer, handler_class=MinecraftHTTPHan
     httpd.serve_forever()
 
 
-ac = AirConditioner()
-ac.connect_device()
+def main():
+    ac = AirConditioner()
+    ac.connect_device()
+    start_ac_handler(ac)
 
-start_ac_handler(ac)
+if __name__ == "__main__":
+    main()
+
+
