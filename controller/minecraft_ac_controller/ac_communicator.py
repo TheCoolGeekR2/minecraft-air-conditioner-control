@@ -7,7 +7,7 @@ class AirConditioner:
     def __init__(self):
         pass
 
-    def connect_device(self):
+    async def _connect_device_background(self):
         discovery = Discovery()
         for device_info in await discovery.scan(wait_for=5):
             try:
@@ -19,3 +19,5 @@ class AirConditioner:
         
         self.device = device
 
+    def connect_device(self):
+        asyncio.run(self._connect_device_background())
