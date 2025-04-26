@@ -1,32 +1,54 @@
 import asyncio
 
-from greeclimate.discovery import Discovery, Listener
-from greeclimate.device import Device, DeviceInfo
-
+from greeclimate.discovery import Discovery
+from greeclimate.device import Device
 
 class AirConditioner:
     def __init__(self):
-        pass
+        self.device = None
 
     async def _connect_device_background(self):
         discovery = Discovery()
         for device_info in await discovery.scan(wait_for=5):
             try:
                 device = Device(device_info)
-                await device.bind()  # Device will auto bind on update if you omit this step
-            except CannotConnect:
-                _LOGGER.error("Unable to bind to gree device: %s", device_info)
+                await device.bind()
+            except Exception as e:
+                print(f"Unable to bind to gree device: {device_info}, error: {e}")
                 continue
 
-        self.device = device
+            self.device = device
+            break
 
     def connect_device(self):
-        asyncio.run(self._connect_device_background())
+        try:
+            loop = asyncio.get_running_loop()
+        except RuntimeError:
+            # No loop is running -> we must manually create one
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+
+        # Now loop is guaranteed to exist
+        if loop.is_running():
+            asyncio.create_task(self._connect_device_background())
+        else:
+            loop.run_until_complete(self._connect_device_background())
+
+    async def _update_ac_background(self, temp=None, fan_speed=None):
+        if temp is not None:
+            self.device.target_temperature = temp
+        if fan_speed is not None:
+            self.device.fan_speed = fan_speed
+        await self.device.push_state_update()
 
     def update_ac(self, temp=None, fan_speed=None):
-        if temp:
-            self.device.target_temperature = temp
-        if fan_speed:
-            self.device.fan_speed = fan_speed
+        try:
+            loop = asyncio.get_running_loop()
+        except RuntimeError:
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
 
-        asyncio.run(self.device.push_state_update())
+        if loop.is_running():
+            asyncio.create_task(self._update_ac_background(temp, fan_speed))
+        else:
+            loop.run_until_complete(self._update_ac_background(temp, fan_speed))
