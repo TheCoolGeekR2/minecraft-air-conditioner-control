@@ -1,5 +1,6 @@
 package greecontrol.event;
 
+import com.google.gson.JsonObject;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.world.World;
 import net.minecraft.util.math.BlockPos;
@@ -54,10 +55,20 @@ public class GameTickHandler {
                 .POST(BodyPublishers.ofString(biome_parameter))
                 .build();
         client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-
     }
 
-    private boolean shouldSendBiome(RegistryEntry<Biome> NewBiome) {
+    private void sendParameter(HttpClient client, String key, String value) {
+        JsonObject parameters = new JsonObject();
+        parameters.addProperty(key, value);
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(AC_API))
+                .POST(BodyPublishers.ofString(parameters.toString()))
+                .build();
+        client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+    }
+
+        private boolean shouldSendBiome(RegistryEntry<Biome> NewBiome) {
         return NewBiome != CurrentPlayerBiome;
     }
 
