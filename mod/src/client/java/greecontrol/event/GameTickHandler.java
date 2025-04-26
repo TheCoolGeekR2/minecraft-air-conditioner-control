@@ -48,22 +48,12 @@ public class GameTickHandler {
                 .orElse(null); // or handle however you like
     }
 
-    private void sendParameter(HttpClient client, String key, String value) {
-        JsonObject parameters = new JsonObject();
-        parameters.addProperty(key, value);
-
+    private void sendParameter(HttpClient client, JsonObject parameters) {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(AC_API))
                 .POST(BodyPublishers.ofString(parameters.toString()))
                 .build();
         client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-    }
-    private void sendBiome(HttpClient client, Identifier BiomeID) {
-        sendParameter(client, "biome", BiomeID.toString());
-    }
-
-    private void sendTimeOfDay(HttpClient client, TimeOfDay timeOfDay) {
-        sendParameter(client, "time_of_day", timeOfDay.toString());
     }
 
     private boolean shouldSendBiome(RegistryEntry<Biome> NewBiome) {
@@ -77,13 +67,14 @@ public class GameTickHandler {
     public void onTick(ClientPlayerEntity player, HttpClient client) {
         RegistryEntry<Biome> biome = GetPlayerBiome(player);
         TimeOfDay time_of_day = GetTimeOfDay(player);
-        if (shouldSendBiome(biome)) {
+        if (shouldSendBiome(biome) || shouldSendTimeOfDay(time_of_day)) {
             CurrentPlayerBiome = biome;
-            sendBiome(client, getClientBiomeId(CurrentPlayerBiome));
-        }
-        if (shouldSendTimeOfDay(time_of_day)) {
             CurrentTimeOfDay = time_of_day;
-            sendTimeOfDay(client, time_of_day);
-        }
+
+            JsonObject parameters = new JsonObject();
+            parameters.addProperty("biome", getClientBiomeId(CurrentPlayerBiome).toString());
+            parameters.addProperty("time_of_day",CurrentTimeOfDay.toString());
+            sendParameter(client, parameters);
+       }
     }
 }
