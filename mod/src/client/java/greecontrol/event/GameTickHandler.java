@@ -1,6 +1,5 @@
 package greecontrol.event;
 
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.world.World;
 import net.minecraft.util.math.BlockPos;
@@ -11,15 +10,31 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.URI;
 import java.net.http.HttpRequest.BodyPublishers;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
+
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
 
+enum TimeOfDay{
+    DAY,
+    NIGHT
+}
 
 public class GameTickHandler {
     String AC_API = "http://127.0.0.1:8080/biome";
     RegistryEntry<Biome> CurrentPlayerBiome = null;
+    TimeOfDay CurrentTimeOfDay = null;
+    static long DAY_START = 0;
+    static long DAY_END = 12000;
+
+    private TimeOfDay GetTimeOfDay(ClientPlayerEntity player) {
+        World world = player.getEntityWorld();
+        long time = world.getTimeOfDay();
+
+        if(DAY_END > time && time > DAY_START) {
+            return TimeOfDay.DAY;
+        }
+        else return TimeOfDay.NIGHT;
+    }
 
     private RegistryEntry<Biome> GetPlayerBiome(ClientPlayerEntity player) {
         BlockPos pos = player.getBlockPos();
