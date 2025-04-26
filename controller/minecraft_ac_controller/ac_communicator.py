@@ -2,6 +2,7 @@ import asyncio
 
 from greeclimate.discovery import Discovery
 from greeclimate.device import Device
+import nest_asyncio 
 
 class AirConditioner:
     def __init__(self):
@@ -49,6 +50,10 @@ class AirConditioner:
             asyncio.set_event_loop(loop)
 
         if loop.is_running():
-            asyncio.create_task(self._update_ac_background(temp, fan_speed))
+            # New task, but also wait for it
+            task = asyncio.create_task(self._update_ac_background(temp, fan_speed))
+            # Small trick to make sure it finishes even inside a running loop:
+            nest_asyncio.apply()  # allows nested event loops
+            loop.run_until_complete(task)
         else:
             loop.run_until_complete(self._update_ac_background(temp, fan_speed))
