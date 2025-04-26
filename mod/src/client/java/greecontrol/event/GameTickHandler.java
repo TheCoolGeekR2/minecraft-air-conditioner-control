@@ -48,15 +48,6 @@ public class GameTickHandler {
                 .orElse(null); // or handle however you like
     }
 
-    private void sendBiome(HttpClient client, Identifier BiomeID) {
-        String biome_parameter = "{ \"biome\": \"" + BiomeID.toString() + "\" }";
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(AC_API))
-                .POST(BodyPublishers.ofString(biome_parameter))
-                .build();
-        client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-    }
-
     private void sendParameter(HttpClient client, String key, String value) {
         JsonObject parameters = new JsonObject();
         parameters.addProperty(key, value);
@@ -67,8 +58,11 @@ public class GameTickHandler {
                 .build();
         client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
-
-        private boolean shouldSendBiome(RegistryEntry<Biome> NewBiome) {
+    private void sendBiome(HttpClient client, Identifier BiomeID) {
+        sendParameter(client, "biome", BiomeID.toString());
+    }
+    
+    private boolean shouldSendBiome(RegistryEntry<Biome> NewBiome) {
         return NewBiome != CurrentPlayerBiome;
     }
 
