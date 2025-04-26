@@ -5,6 +5,7 @@ from minecraft_ac_controller.ac_communicator import AirConditioner
 def start_ac_handler(ac, server_class=HTTPServer, handler_class=MinecraftHTTPHandler, port=8080):
     server_address = ('127.0.0.1', port)
     httpd = server_class(server_address, handler_class, ac)
+    httpd.RequestHandlerClass.AC = ac
     print(f"Starting server on port {port}")
     httpd.serve_forever()
 

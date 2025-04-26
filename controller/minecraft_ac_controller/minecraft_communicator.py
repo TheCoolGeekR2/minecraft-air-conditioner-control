@@ -3,13 +3,14 @@ import json
 from .process_biome import process_biome
 
 class MinecraftHTTPHandler(BaseHTTPRequestHandler):
-    def do_POST(self, ac):
+    AC = None
+
+    def do_POST(self):
         content_length = int(self.headers['Content-Length'])  # Get the size of data
         post_data = self.rfile.read(content_length)  # Read the data
-        self.ac = ac
         try:
             data = json.loads(post_data)
-            process_biome(data, self.ac)
+            process_biome(data, self.AC)
             self.send_response(200)
         except json.JSONDecodeError:
             self.send_response(400)
