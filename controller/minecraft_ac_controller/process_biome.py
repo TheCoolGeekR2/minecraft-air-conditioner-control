@@ -14,5 +14,5 @@ def process_biome(biome_data: Dict, air_conditioner: AirConditioner):
     
     air_conditioner.update_ac(
         temp=ac_parameters["day_temp"],
-        fan_speed=ac_parameters["wind_level"]
+        fan_speed=ac_parameters["wind_level"] * 5
     )
