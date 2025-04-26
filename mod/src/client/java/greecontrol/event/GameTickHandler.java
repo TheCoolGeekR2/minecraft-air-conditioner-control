@@ -61,7 +61,11 @@ public class GameTickHandler {
     private void sendBiome(HttpClient client, Identifier BiomeID) {
         sendParameter(client, "biome", BiomeID.toString());
     }
-    
+
+    private void sendTimeOfDay(HttpClient client, TimeOfDay timeOfDay) {
+        sendParameter(client, "time_of_day", timeOfDay.toString());
+    }
+
     private boolean shouldSendBiome(RegistryEntry<Biome> NewBiome) {
         return NewBiome != CurrentPlayerBiome;
     }
@@ -72,14 +76,14 @@ public class GameTickHandler {
 
     public void onTick(ClientPlayerEntity player, HttpClient client) {
         RegistryEntry<Biome> biome = GetPlayerBiome(player);
-        TimeOfDay TimeOfDay = GetTimeOfDay(player);
+        TimeOfDay time_of_day = GetTimeOfDay(player);
         if (shouldSendBiome(biome)) {
             CurrentPlayerBiome = biome;
             sendBiome(client, getClientBiomeId(CurrentPlayerBiome));
         }
-        if (shouldSendTimeOfDay(TimeOfDay)) {
-            CurrentTimeOfDay = TimeOfDay;
-
+        if (shouldSendTimeOfDay(time_of_day)) {
+            CurrentTimeOfDay = time_of_day;
+            sendTimeOfDay(client, time_of_day);
         }
     }
 }
