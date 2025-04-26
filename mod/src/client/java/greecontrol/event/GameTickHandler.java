@@ -21,7 +21,7 @@ enum TimeOfDay{
 }
 
 public class GameTickHandler {
-    String AC_API = "http://127.0.0.1:8080/biome";
+    String AC_API = "http://127.0.0.1:8080/minecraft-control";
     RegistryEntry<Biome> CurrentPlayerBiome = null;
     TimeOfDay CurrentTimeOfDay = null;
     static long DAY_START = 0;
