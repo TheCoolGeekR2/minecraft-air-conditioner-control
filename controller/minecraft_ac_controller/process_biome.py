@@ -12,5 +12,7 @@ def process_biome(biome_data: Dict, air_conditioner: AirConditioner):
     except KeyError:
         raise BiomeNotFound(biome_name)
     
-    print(f"Biome ID: {biome_id}, AC Parameters: {ac_parameters}")
-    
+    air_conditioner.update_ac(
+        temp=ac_parameters["day_temp"],
+        fan_speed=ac_parameters["wind_level"]
+    )
